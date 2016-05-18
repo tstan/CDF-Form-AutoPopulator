@@ -2,6 +2,8 @@ package model.data_retrieval;
 import java.io.*;
 import java.net.*;
 import java.nio.channels.*;
+import java.util.Arrays;
+
 import org.apache.commons.io.*;
 
 /**
@@ -26,10 +28,18 @@ public class DataGrabber {
 	 * @return true, if the code is valid; false, if the code is invalid.
 	 */
 	public boolean inputCode(String code) {
+		code = code.toUpperCase();
+		System.out.println(code);
+		String[] combs = {"SUB", "CUP", "MUP", "DRC", "PMT"};
 		boolean valid = true;
 		if (code.replaceAll("\\D", "").length() != 9 || !code.contains("-")) {
-			System.out.println("ERROR: Code should be format 'xxxx-xxxxx' with hyphen " +
-			 "in the middle. (e.g. '2014-03045').");
+			System.out.println("ERROR: Code should be format '[3-leter code]xxxx-xxxxx' with hyphen " +
+			 "in the middle. (e.g. 'PMT2014-03045').");
+			valid = false;
+		}
+		else if(!Arrays.asList(combs).contains(code.substring(0,3))){
+			System.out.println("ERROR: Wrong 3 letter code. Code should be format '[3-leter code]xxxx-xxxxx' with hyphen " +
+			 "in the middle. (e.g. 'PMT2014-03045').");
 			valid = false;
 		}
 		else {
@@ -48,9 +58,9 @@ public class DataGrabber {
 	 * @throws IOException Error is thrown when the file fails to be created.
 	 */
 	public void getJSONFile() throws IOException{
-		URL url = new URL("https://www.sloplanning.org/PermitInfo/api/values?permit=PMT"+pmtCode);
-		System.out.println("url is: " + url);
-		File file = new File("data.JSON");
+		URL url = new URL("https://www.sloplanning.org/PermitInfo/api/values?permit="+pmtCode);
+		//System.out.println("url is: " + url);
+		File file = new File("data.json");
 		System.out.println("getting json file...");
 		FileUtils.copyURLToFile(url, file);
 		System.out.println("success!");
